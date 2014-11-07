@@ -20,10 +20,15 @@ type Logger interface {
 	Fatal(msg string, args ...interface{})
 }
 
-// Global logger.
+// Default logger.
 var logger = defaultLogger()
 
-// SetLogger replaces global Logger.
+// GetLogger returns current default logger
+func GetLogger() Logger {
+	return logger
+}
+
+// SetLogger replaces default Logger.
 func SetLogger(l Logger) {
 	logger = l
 }
@@ -63,7 +68,7 @@ type loggerImpl struct {
 func defaultLogger() Logger {
 	var module = os.Args[0]
 	var logger = log.MustGetLogger(module)
-	var format = "[" + module + "] %{color}%{time:15:04:05.000000} %{message}%{color:reset}"
+	var format = "%{color}[" + module + "]%{time:15:04:05.000000} %{level:.4s}:%{color:reset} %{message}"
 	log.SetFormatter(log.MustStringFormatter(format))
 
 	if level := os.Getenv("LOG_LEVEL"); level != "" {
