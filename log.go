@@ -3,9 +3,6 @@ package log
 
 import "os"
 
-// TODO consider to use github.com/golang/glog for default logger
-import log "github.com/op/go-logging"
-
 // Logger defines common logger interface.
 type Logger interface {
 	// Debug log.
@@ -57,59 +54,4 @@ func Error(msg string, args ...interface{}) {
 func Fatal(msg string, args ...interface{}) {
 	logger.Fatal(msg, args...)
 	os.Exit(1)
-}
-
-// Logger impl.
-type loggerImpl struct {
-	log *log.Logger
-}
-
-// Creates default logger.
-func defaultLogger() Logger {
-	var module = os.Args[0]
-	var logger = log.MustGetLogger(module)
-	var format = "%{color}[" + module + "]%{time:15:04:05.000000} %{level:.4s}:%{color:reset} %{message}"
-	log.SetFormatter(log.MustStringFormatter(format))
-
-	if level := os.Getenv("LOG_LEVEL"); level != "" {
-		var levels = map[string]log.Level{
-			"debug":    log.DEBUG,
-			"info":     log.INFO,
-			"notice":   log.NOTICE,
-			"warning":  log.WARNING,
-			"error":    log.ERROR,
-			"critical": log.CRITICAL,
-			"fatal":    log.CRITICAL,
-		}
-		log.SetLevel(levels[level], module)
-	} else {
-		log.SetLevel(log.DEBUG, module)
-	}
-
-	return &loggerImpl{logger}
-}
-
-// Debug log.
-func (l *loggerImpl) Debug(msg string, args ...interface{}) {
-	l.log.Debug(msg, args)
-}
-
-// Info log.
-func (l *loggerImpl) Info(msg string, args ...interface{}) {
-	l.log.Info(msg, args)
-}
-
-// Warning log.
-func (l *loggerImpl) Warning(msg string, args ...interface{}) {
-	l.log.Warning(msg, args)
-}
-
-// Error log.
-func (l *loggerImpl) Error(msg string, args ...interface{}) {
-	l.log.Error(msg, args)
-}
-
-// Fatal log.
-func (l *loggerImpl) Fatal(msg string, args ...interface{}) {
-	l.log.Fatalf(msg, args)
 }
