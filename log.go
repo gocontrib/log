@@ -18,7 +18,12 @@ type Logger interface {
 }
 
 // Default logger.
-var logger = defaultLogger()
+var logger = defaultLogger
+
+// GetDefaultLogger returns builtin Logger implementation
+func GetDefaultLogger() Logger {
+	return defaultLogger
+}
 
 // GetLogger returns current default logger
 func GetLogger() Logger {
