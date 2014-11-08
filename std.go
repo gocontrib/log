@@ -91,6 +91,7 @@ var (
 		error:    red,
 		critical: magenta,
 	}
+	isWindows = runtime.GOOS == "windows"
 )
 
 // Print a message.
@@ -104,7 +105,7 @@ func (l *loggerImpl) print(level int, lstr string, msg string, args ...interface
 
 	var t = time.Now().Format("15:04:05.000000")
 	var p string
-	if runtime.GOOS == "windows" {
+	if isWindows {
 		p = fmt.Sprintf("[%s] %s %s ", l.module, t, lstr)
 	} else {
 		p = fmt.Sprintf("[%s] %s%s %s%s%s ", l.module, magenta, t, colors[level], lstr, reset)
