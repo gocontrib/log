@@ -4,6 +4,7 @@ import "fmt"
 import "os"
 import "sync"
 import "time"
+import "runtime"
 
 const (
 	debug int = iota
@@ -101,8 +102,13 @@ func (l *loggerImpl) print(level int, lstr string, msg string, args ...interface
 		return
 	}
 
-	t := time.Now().Format("15:04:05.000000")
-	p := fmt.Sprintf("[%s] %s%s %s%s%s ", l.module, magenta, t, colors[level], lstr, reset)
-	s := fmt.Sprintf(msg, args...)
+	var t = time.Now().Format("15:04:05.000000")
+	var p string
+	if runtime.GOOS == "windows" {
+		p = fmt.Sprintf("[%s] %s %s ", l.module, t, lstr)
+	} else {
+		p = fmt.Sprintf("[%s] %s%s %s%s%s ", l.module, magenta, t, colors[level], lstr, reset)
+	}
+	var s = fmt.Sprintf(msg, args...)
 	fmt.Println(p, s)
 }
