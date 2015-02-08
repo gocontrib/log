@@ -7,11 +7,11 @@ import "time"
 import "runtime"
 
 const (
-	debug int = iota
-	info
-	warn
-	error
-	critical
+	debugLevel int = iota
+	infoLevel
+	warnLevel
+	errorLevel
+	criticalLevel
 )
 
 // Logger impl.
@@ -26,17 +26,17 @@ var defaultLogger = makeDefaultLogger()
 // Creates default logger.
 func makeDefaultLogger() Logger {
 	var module = os.Args[0]
-	var level = debug
+	var level = debugLevel
 
 	if val := os.Getenv("LOG_LEVEL"); val != "" {
 		var levels = map[string]int{
-			"debug":    debug,
-			"info":     info,
-			"warning":  warn,
-			"warn":     warn,
-			"error":    error,
-			"critical": critical,
-			"fatal":    critical,
+			"debug":    debugLevel,
+			"info":     infoLevel,
+			"warning":  warnLevel,
+			"warn":     warnLevel,
+			"error":    errorLevel,
+			"critical": criticalLevel,
+			"fatal":    criticalLevel,
 		}
 		level = levels[val]
 	}
@@ -46,27 +46,27 @@ func makeDefaultLogger() Logger {
 
 // Debug log.
 func (l *loggerImpl) Debug(msg string, args ...interface{}) {
-	l.print(debug, "DEBU", msg, args...)
+	l.print(debugLevel, "DEBU", msg, args...)
 }
 
 // Info log.
 func (l *loggerImpl) Info(msg string, args ...interface{}) {
-	l.print(info, "INFO", msg, args...)
+	l.print(infoLevel, "INFO", msg, args...)
 }
 
 // Warning log.
 func (l *loggerImpl) Warning(msg string, args ...interface{}) {
-	l.print(warn, "WARN", msg, args...)
+	l.print(warnLevel, "WARN", msg, args...)
 }
 
 // Error log.
 func (l *loggerImpl) Error(msg string, args ...interface{}) {
-	l.print(error, "ERRO", msg, args...)
+	l.print(errorLevel, "ERRO", msg, args...)
 }
 
 // Fatal log.
 func (l *loggerImpl) Fatal(msg string, args ...interface{}) {
-	l.print(critical, "FATA", msg, args...)
+	l.print(criticalLevel, "FATA", msg, args...)
 }
 
 func color(v int) string {
@@ -85,11 +85,11 @@ var (
 	white   = color(7)
 	reset   = "\033[0m"
 	colors  = []string{
-		debug:    cyan,
-		info:     green,
-		warn:     yellow,
-		error:    red,
-		critical: magenta,
+		debugLevel:    cyan,
+		infoLevel:     green,
+		warnLevel:     yellow,
+		errorLevel:    red,
+		criticalLevel: magenta,
 	}
 	isWindows = runtime.GOOS == "windows"
 )
