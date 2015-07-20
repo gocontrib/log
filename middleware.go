@@ -2,6 +2,8 @@ package log
 
 import (
 	"bufio"
+	"errors"
+	"io"
 	"net"
 	"net/http"
 	"time"
@@ -57,6 +59,33 @@ func (w *wrapper) Write(b []byte) (int, error) {
 
 // Hijack implements Hijacker interface
 func (w *wrapper) Hijack() (net.Conn, *bufio.ReadWriter, error) {
-	var h = w.ResponseWriter.(http.Hijacker)
+	var h, ok = w.ResponseWriter.(http.Hijacker)
+	if !ok {
+		return nil, nil, errors.New("http.Hijacker is not supported")
+	}
 	return h.Hijack()
+}
+
+func (w *wrapper) Flush() {
+	var f, ok = w.ResponseWriter.(http.Flusher)
+	if !ok {
+		panic("http.Flusher is not supported")
+	}
+	f.Flush()
+}
+
+func (w *wrapper) CloseNotify() <-chan bool {
+	var c, ok = w.ResponseWriter.(http.CloseNotifier)
+	if !ok {
+		panic("http.CloseNotifier is not supported")
+	}
+	return c.CloseNotify()
+}
+
+func (w *wrapper) ReadFrom(r io.Reader) (int64, error) {
+	rf, ok := w.ResponseWriter.(io.ReaderFrom)
+	if !ok {
+		return 0, errors.New("io.ReaderFrom is not supported")
+	}
+	return rf.ReadFrom(r)
 }
