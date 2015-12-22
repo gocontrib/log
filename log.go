@@ -55,6 +55,11 @@ func Error(msg string, args ...interface{}) {
 	logger.Error(msg, args...)
 }
 
+// Errorf log.
+func Errorf(msg string, args ...interface{}) {
+	logger.Error(msg, args...)
+}
+
 // Fatal log.
 func Fatal(msg string, args ...interface{}) {
 	logger.Fatal(msg, args...)
